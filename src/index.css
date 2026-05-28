@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    --ink: 28 25 22;
+    --parchment: 244 241 236;
+    --paper: 254 252 249;
+    --rust: 184 92 56;
+    --rust-bg: 253 240 235;
+    --forest: 61 107 79;
+    --forest-bg: 236 245 240;
+    --amber: 139 105 20;
+    --amber-bg: 252 247 232;
+    --navy: 28 78 138;
+    --navy-bg: 232 240 252;
+    --stone: 124 114 105;
+    --rule: 221 216 208;
+    --background: 244 241 236;
+    --foreground: 28 25 22;
+    --card: 254 252 249;
+    --card-foreground: 28 25 22;
+    --border: 221 216 208;
+    --input: 221 216 208;
+    --ring: 184 92 56;
+    --primary: 28 25 22;
+    --primary-foreground: 244 241 236;
+    --secondary: 237 234 229;
+    --secondary-foreground: 28 25 22;
+    --muted: 237 234 229;
+    --muted-foreground: 124 114 105;
+    --accent: 184 92 56;
+    --accent-foreground: 254 252 249;
+    --destructive: 185 28 28;
+    --destructive-foreground: 254 252 249;
+    --radius: 0.25rem;
+  }
+  * { @apply border-border; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: rgb(var(--parchment));
+    color: rgb(var(--ink));
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: 'DM Serif Display', serif; }
+}
+
+/* ── Noise texture overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Status color helpers ── */
+.status-done   { color: rgb(var(--forest)); }
+.status-review { color: rgb(var(--amber)); }
+.status-wip    { color: rgb(var(--navy)); }
+.status-todo   { color: rgb(var(--stone)); }
+.bg-status-done   { background: rgb(var(--forest-bg)); }
+.bg-status-review { background: rgb(var(--amber-bg)); }
+.bg-status-wip    { background: rgb(var(--navy-bg)); }
+.bg-status-todo   { background: rgb(var(--secondary)); }
+
+/* ── Color variants for member avatars ── */
+.av-rust   { background: rgb(var(--rust-bg));   color: rgb(var(--rust)); }
+.av-forest { background: rgb(var(--forest-bg)); color: rgb(var(--forest)); }
+.av-amber  { background: rgb(var(--amber-bg));  color: rgb(var(--amber)); }
+.av-navy   { background: rgb(var(--navy-bg));   color: rgb(var(--navy)); }
+.av-stone  { background: rgb(var(--secondary)); color: rgb(var(--stone)); }
+
+
+@layer base {
+  :root {
+    --ink: 28 25 22;
+    --parchment: 244 241 236;
+    --paper: 254 252 249;
+    --rust: 184 92 56;
+    --rust-bg: 253 240 235;
+    --forest: 61 107 79;
+    --forest-bg: 236 245 240;
+    --amber: 139 105 20;
+    --amber-bg: 252 247 232;
+    --navy: 28 78 138;
+    --navy-bg: 232 240 252;
+    --stone: 124 114 105;
+    --rule: 221 216 208;
+    --background: 244 241 236;
+    --foreground: 28 25 22;
+    --card: 254 252 249;
+    --card-foreground: 28 25 22;
+    --border: 221 216 208;
+    --input: 221 216 208;
+    --ring: 184 92 56;
+    --primary: 28 25 22;
+    --primary-foreground: 244 241 236;
+    --secondary: 237 234 229;
+    --secondary-foreground: 28 25 22;
+    --muted: 237 234 229;
+    --muted-foreground: 124 114 105;
+    --accent: 184 92 56;
+    --accent-foreground: 254 252 249;
+    --destructive: 185 28 28;
+    --destructive-foreground: 254 252 249;
+    --radius: 0.25rem;
+  }
+  * { @apply border-border; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: rgb(var(--parchment));
+    color: rgb(var(--ink));
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: 'DM Serif Display', serif; }
+}
+
+/* ── Noise texture overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Status color helpers ── */
+.status-done   { color: rgb(var(--forest)); }
+.status-review { color: rgb(var(--amber)); }
+.status-wip    { color: rgb(var(--navy)); }
+.status-todo   { color: rgb(var(--stone)); }
+.bg-status-done   { background: rgb(var(--forest-bg)); }
+.bg-status-review { background: rgb(var(--amber-bg)); }
+.bg-status-wip    { background: rgb(var(--navy-bg)); }
+.bg-status-todo   { background: rgb(var(--secondary)); }
+
+/* ── Color variants for member avatars ── */
+.av-rust   { background: rgb(var(--rust-bg));   color: rgb(var(--rust)); }
+.av-forest { background: rgb(var(--forest-bg)); color: rgb(var(--forest)); }
+.av-amber  { background: rgb(var(--amber-bg));  color: rgb(var(--amber)); }
+.av-navy   { background: rgb(var(--navy-bg));   color: rgb(var(--navy)); }
+.av-stone  { background: rgb(var(--secondary)); color: rgb(var(--stone)); }
+
+/* ── Editor content styles ── */
+[contenteditable] h1,
+.editor-preview h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: rgb(var(--ink));
+  margin: 1.25rem 0 0.5rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid rgb(var(--rule));
+}
+[contenteditable] h2,
+.editor-preview h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: rgb(var(--ink));
+  margin: 1rem 0 0.375rem;
+  letter-spacing: -0.01em;
+}
+[contenteditable] h3,
+.editor-preview h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(var(--stone));
+  margin: 0.75rem 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+[contenteditable] p,
+.editor-preview p {
+  margin: 0 0 0.625rem;
+  line-height: 1.7;
+}
+[contenteditable] ul,
+.editor-preview ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+[contenteditable] ol,
+.editor-preview ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+[contenteditable] li,
+.editor-preview li {
+  line-height: 1.65;
+  margin-bottom: 0.2rem;
+}
+[contenteditable]:empty:before {
+  content: attr(data-placeholder);
+  color: rgb(var(--stone));
+  font-style: italic;
+  pointer-events: none;
+}
+[contenteditable]:focus {
+  outline: none;
+}
