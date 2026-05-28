@@ -54,7 +54,14 @@ export default function Workspace({ project, onBack, onUpdate }: Props) {
           <span className="text-sm font-semibold truncate" style={{ color: 'rgb(var(--ink))' }}>{project.name}</span>
           <span className="text-xs px-1.5 py-0.5 font-mono shrink-0" style={{ background: 'rgb(var(--parchment))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>{score}%</span>
         </div>
-        <div className="flex items-center gap-1 px-3 shrink-0">
+        <div className="flex items-center gap-2 px-3 shrink-0">
+            <button
+              onClick={() => alert('전체 PPT 내보내기는 Phase 2 (Firebase Storage 연동) 이후 지원 예정이에요.')}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border transition-colors hover:bg-gray-50"
+              style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}
+              title="챕터별 최종본 PPT를 하나로 머지한 파일 다운로드">
+              ↓ PPT 내보내기
+            </button>
           <div className="flex -space-x-1 mr-2">
             {project.members.slice(0, 4).map((m, i) => (
               <div key={i} className={`w-6 h-6 rounded-full border-2 text-[9px] font-bold flex items-center justify-center av-${m.color}`} style={{ borderColor: 'rgb(var(--paper))' }}>{m.initial}</div>
@@ -66,7 +73,7 @@ export default function Workspace({ project, onBack, onUpdate }: Props) {
               🔔
               <span className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full" style={{ background: 'rgb(var(--rust))' }} />
             </button>
-            {showNotif && <NotifDropdown onClose={() => setShowNotif(false)} />}
+            {showNotif && <NotifDropdown onClose={() => setShowNotif(false)} onGoToChapter={(id) => { goToEditor(id); setShowNotif(false); }} />}
           </div>
         </div>
       </header>
