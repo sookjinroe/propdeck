@@ -1,49 +1,71 @@
-# PropDeck 프로덕션 전환 작업 계획
+# PropDeck 프로덕션 전환 계획
 
-> 현재 상태: React SPA 목업 (인메모리 상태, 단일 HTML 번들)  
-> 목표: 실사용 가능한 S-Core 내부 협업 툴
-
----
-
-## 현재 목업과 프로덕션의 차이
-
-| 항목 | 현재 (목업) | 프로덕션 |
-|------|------------|---------|
-| 데이터 저장 | 브라우저 메모리 (새로고침 시 소멸) | Firestore 실시간 DB |
-| 인증 | 없음 | Google SSO / 사내 IdP |
-| 파일 업로드 | 선택 이벤트만 (저장 안 됨) | Firebase Storage (Spark 5GB 무료) |
-| PPT 썸네일 | CSS mock | PPTXjs 브라우저 파싱 (무료) → Cloud Functions (선택) |
-| 실시간 협업 | 없음 | Firestore onSnapshot (구독 수명주기 관리 필수) |
-| 충돌 감지 | 없음 | 버전 기반 낙관적 락 (Phase 1에서 구현) |
-| 알림 | UI만 | 이메일 / Slack webhook |
-| 권한 관리 | UI만 | Firestore Security Rules |
-| 배포 | 단일 HTML 파일 | Firebase Hosting |
-| 백엔드 서버 | 없음 (SPA) | 없음 유지 (서버리스) |
+> 작업 인수인계용. 현재 상태와 각 Phase에서 해야 할 작업을 기술.
 
 ---
 
-## Phase 1 — 데이터 영속성 + 인증 + 충돌 감지 (필수, ~3주)
+## 현재 상태 (목업)
 
-> **목표**: 새로고침해도 데이터가 유지되고, 로그인이 필요하며, 동시 편집 충돌이 처리됨
+- React 19 + TypeScript + Vite + Tailwind v4 SPA
+- 단일 HTML 번들 (`bundle.html`) — Firebase Hosting 배포 가능
+- 모든 데이터는 인메모리. 새로고침 시 초기화됨
+- 인증 없음. 단일 사용자 목업
+- 빌드: `pnpm run build` → `bash bundle-artifact.sh` → `bundle.html`
 
-### 1-1. Firebase 프로젝트 설정
-- Firebase 프로젝트 생성 (또는 기존 S-Core 프로젝트 활용)
-- Firestore, Authentication, Storage 활성화
-- `firebase-applet-config.json` 연동
-
-### 1-2. 인증 (Firebase Auth)
-- Google OAuth 로그인 (사내 Google Workspace 계정)
-- 로그인/로그아웃 UI
-- 인증된 사용자만 접근 가능하도록 라우팅 보호
+### 소스 구조
 
 ```
 src/
-└── lib/
-    ├── firebase.ts       # Firebase 초기화
-    └── auth.ts           # useAuth hook
+├── App.tsx               # 프로젝트 목록 ↔ 워크스페이스 라우팅
+├── types.ts              # Chapter, Project, Member, SlideInfo, Comment, Reply
+├── data.ts               # SAMPLE_CHAPTERS, INITIAL_PROJECTS, MEMBERS, TEMPLATES
+├── index.css             # 디자인 토큰 (--ink, --rust, --parchment 등)
+├── lib/
+│   ├── chapters.ts       # buildTree, flattenTree, getChapterNumber, maturityScore
+│   └── utils.ts          # cn()
+├── views/
+│   ├── ProjectList.tsx
+│   ├── Workspace.tsx     # 헤더 + 사이드바 + 뷰 라우팅
+│   ├── OverviewView.tsx  # 챕터 브리프 테이블
+│   ├── EditorView.tsx    # 텍스트 에디터 (contentEditable)
+│   ├── FullView.tsx      # 전체 보기 + 슬라이드 스트립
+│   └── RefView.tsx       # 참고 문서 뷰어 (하드코딩)
+└── components/
+    ├── Sidebar.tsx        # 챕터 트리 + 완성도 바
+    ├── PptCard.tsx        # PPT 버전 관리 (드래그앤드롭, 목업)
+    ├── AttachCard.tsx     # 기타 첨부
+    ├── CommentPanel.tsx   # 코멘트 + 답글 + 리졸브
+    ├── MembersPanel.tsx   # 팀원 관리
+    ├── SlideStrip.tsx     # 슬라이드 썸네일 스트립
+    └── NotifDropdown.tsx  # 알림 드롭다운
 ```
 
-### 1-3. Firestore 데이터 모델
+### 설계 결정 (변경 금지)
+
+- 상태 관리: 전역 없음. `App → Workspace → views` prop drilling. Firestore 연동 시 `onSnapshot` hook으로 교체
+- 챕터 계층: `parentId` 기반 트리. 번호는 `getChapterNumber()` 동적 계산
+- 챕터 수정: 항상 `onUpdateChapters(Chapter[])` 전체 배열 교체
+- 에디터: `contentEditable div` + `document.execCommand`. Firestore 연동 시 그대로 유지
+
+---
+
+## Phase 1 — 데이터 영속성 + 인증 + 충돌 감지 (~3주)
+
+### Firebase 설정
+
+```bash
+# 필요 서비스: Firestore, Authentication, Hosting
+# Spark 플랜(무료)으로 시작 가능. 신용카드 불필요
+```
+
+```typescript
+// src/lib/firebase.ts
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+```
+
+### Firestore 데이터 모델
 
 ```
 /projects/{projectId}
@@ -56,58 +78,45 @@ src/
   userId, text, resolved, replies[], createdAt
 ```
 
-### 1-4. 실시간 동기화 — onSnapshot 수명주기 관리 필수
+현재 `types.ts`의 타입 구조와 대응됨. `version: number` 필드가 충돌 감지에 사용됨.
 
-현재 `useState`로 관리하는 상태를 Firestore `onSnapshot`으로 교체.
+### 인증
 
-```typescript
-// 현재
-const [chapters, setChapters] = useState(SAMPLE_CHAPTERS);
+- Google OAuth (사내 Google Workspace 계정) 또는 SAML SSO
+- 라우팅 보호: 미인증 시 로그인 화면으로 redirect
 
-// 변경 후
-const chapters = useChapters(projectId); // onSnapshot hook
-```
+### onSnapshot 연동 시 유의사항
 
-**⚠️ 구독 누수 방지**: onSnapshot은 반드시 `useEffect` cleanup에서 unsubscribe 호출.
-패널(코멘트, 첨부, 히스토리)은 해당 챕터가 활성화된 동안만 구독, 챕터 전환 시 즉시 해제.
-구독 수가 많을수록 Firestore 읽기 쿼터 소모가 빠름.
+현재 `useState(SAMPLE_CHAPTERS)` → `useChapters(projectId)` hook으로 교체.
+**반드시 `useEffect` cleanup에서 `unsubscribe()` 호출** (구독 누수 = Firestore 읽기 쿼터 낭비).
 
 ```typescript
 useEffect(() => {
-  const unsubscribe = onSnapshot(q, handler);
-  return () => unsubscribe(); // 반드시 cleanup
-}, [chapterId]);
+  const unsubscribe = onSnapshot(query, handler);
+  return () => unsubscribe();
+}, [projectId]);
 ```
 
-영향 범위: `OverviewView`, `EditorView`, `CommentPanel`, `Sidebar`
+코멘트, 히스토리 패널은 해당 챕터 활성 시에만 구독.
 
-### 1-5. 버전 기반 충돌 감지
+### 충돌 감지 (버전 기반 낙관적 락)
 
-참조 구현 있음 (AI Studio PPT Co-Authoring 프로젝트에서 검증된 패턴).
-Firestore 연동 시점에 바로 적용 가능.
+검증된 참조 구현 있음. 저장 시 DB 최신 버전 확인 후 충돌이면 side-by-side diff UI 표시.
 
 ```typescript
-// 편집 시작 시 현재 버전 스냅샷
-const [editingBaseVersion, setEditingBaseVersion] = useState<number | null>(null);
-
-// 저장 시 DB 최신 버전과 비교
-const snap = await getDoc(chapterRef);
-if (snap.data().version > editingBaseVersion) {
-  setConflict({ dbVersion, dbTitle, dbContent }); // 충돌 UI 표시
-  return;
-}
-
-// 충돌 없으면 version + 1로 저장
-await updateDoc(chapterRef, { ...data, version: currentVersion + 1 });
+const handleSave = async () => {
+  const snap = await getDoc(chapterRef);
+  if (snap.data().version > editingBaseVersion) {
+    setConflict({ dbVersion, dbTitle, dbContent }); // UI에서 선택
+    return;
+  }
+  await updateDoc(chapterRef, { ...data, version: current + 1 });
+};
 ```
 
-충돌 발생 시 side-by-side diff UI로 "서버 버전 채택" vs "내 버전 저장" 선택.
-WordDiff 컴포넌트(단어 단위 변경 하이라이트)도 참조 구현에서 포팅 가능.
-
-### 1-6. Firestore Security Rules
+### Security Rules
 
 ```javascript
-// 프로젝트 멤버만 읽기/쓰기
 match /projects/{projectId} {
   allow read, write: if request.auth.uid in resource.data.memberIds;
 }
@@ -117,181 +126,74 @@ match /projects/{projectId} {
 
 ## Phase 2 — 파일 처리 (~2주)
 
-> **목표**: 실제 PPT 파일이 업로드되고 버전 관리됨  
-> **플랜**: Spark 무료 플랜으로 가능 (Cloud Functions 미사용)
+### Firebase Storage (Spark 플랜 5GB 무료)
 
-### 2-1. Firebase Storage 연동 (base64 Firestore 저장 금지)
-
-파일은 반드시 Firebase Storage에 저장. Firestore 문서 내 base64 인라인 저장 금지.
-
-이유:
-- Firestore 문서 최대 크기 1MB → 파일 저장 시 읽기/쓰기 비용 급증
-- Firebase Storage는 Spark 플랜에서 5GB 무료 제공
-- 다운로드 URL만 Firestore에 저장하는 패턴이 표준
+**Firestore 문서 내 base64 저장 금지.** 파일은 반드시 Storage에 저장, URL만 Firestore에 기록.
 
 ```
-파일 업로드 → Firebase Storage gs://bucket/projects/{id}/chapters/{id}/ppt/{version}/
-→ 다운로드 URL → Firestore pptVersions[].url 에 저장
+gs://bucket/projects/{id}/chapters/{id}/ppt/{version}/{filename}
 ```
 
-### 2-2. PPT 썸네일 (단계적 접근)
+현재 `PptCard.tsx`가 목업으로 파일 선택 이벤트만 처리. Storage 연동 시 실제 업로드 + URL 저장으로 교체.
 
-현재 CSS mock → 실제 슬라이드 이미지. **Blaze 플랜 불필요.**
+### PPT 썸네일
 
-**Phase 2: 브라우저 파싱 (무료)**  
-`PPTXjs` 라이브러리로 클라이언트에서 직접 슬라이드 렌더링.
-서버 불필요, Spark 플랜에서 동작. 복잡한 애니메이션·특수 폰트는 부분적으로 깨질 수 있음.
+Phase 2: `PPTXjs` 클라이언트 파싱 (무료, Spark 플랜).
+향후 품질 개선 시: Cloud Functions + LibreOffice headless (Blaze 플랜 필요).
 
-```
-PPTX 업로드 → Storage 저장
-→ 클라이언트에서 PPTXjs로 파싱
-→ Canvas로 슬라이드 렌더링 → 썸네일 표시
-```
-
-**향후 품질 개선이 필요할 때: Cloud Functions (Blaze 플랜)**
-```
-PPTX 업로드 트리거 → Cloud Function
-→ LibreOffice headless PNG 변환
-→ Storage thumbnails/ 저장 → Firestore thumbnailUrls[] 업데이트
-```
-
-`SlideInfo`에 `thumbnailUrl?: string` 추가. 있으면 이미지, 없으면 CSS mock fallback.
+`SlideInfo` 타입에 `thumbnailUrl?: string` 추가. 없으면 현재 CSS mock fallback.
 
 ---
 
 ## Phase 3 — 실시간 협업 (~2주)
 
-> **목표**: 여러 사용자가 동시에 작업할 때 충돌 없이 동작  
-> 충돌 감지는 Phase 1에서 이미 구현됨. Phase 3은 presence/잠금 레이어 추가.
+Phase 1 충돌 감지 위에 presence/잠금 레이어 추가.
 
-### 3-1. 온라인 상태 표시
-- Firebase Realtime Database presence 활용
-- 같은 챕터를 보고 있는 사용자 아바타 표시 (에디터 상단)
-
-### 3-2. 편집 잠금 (낙관적 락)
-- 에디터 진입 시 `editingBy: userId` Firestore에 기록
-- 다른 사용자가 진입 시 "누군가 편집 중" 표시
+- Firebase Realtime Database presence로 온라인 사용자 표시
+- 에디터 진입 시 `editingBy: userId` 기록, 다른 사용자 진입 차단
 - 5분 비활동 시 자동 잠금 해제
 
 ---
 
 ## Phase 4 — 알림 (~1주)
 
-> **목표**: @멘션, 인텐트 변경, 리뷰 요청 시 실제 알림 발송
-
-### 4-1. 인앱 알림
-- Firestore `/users/{uid}/notifications/` 컬렉션
-- 새 알림 뱃지 실시간 업데이트 (현재 하드코딩된 빨간 점)
-- 알림 클릭 → 해당 챕터 에디터로 라우팅
-
-### 4-2. 이메일 알림 (선택)
-- Cloud Functions + SendGrid 또는 사내 SMTP
-- @멘션, 리뷰 요청, 인텐트 변경 트리거
-
-### 4-3. Slack 연동 (선택)
-- Slack Incoming Webhook
-- 채널별 알림 설정
+- Firestore `/users/{uid}/notifications/` 실시간 구독
+- 현재 `NotifDropdown.tsx`는 하드코딩된 3개 항목. DB 연동으로 교체
+- 알림 클릭 → 챕터 이동은 이미 구현됨 (`onGoToChapter` 콜백)
+- 이메일/Slack은 Cloud Functions 필요 (Blaze 플랜)
 
 ---
 
-## Phase 5 — 미완성 기능 완성 (~2주)
+## Phase 5 — 미완성 기능 (~2주)
 
-현재 목업에서 UI만 있는 기능들:
-
-| 기능 | 현재 상태 | 작업 내용 |
-|------|----------|---------|
-| 멤버 초대 | 입력창만 | Firebase Auth 이메일 초대 |
-| 역할 기반 권한 | 목업 동작, DB 미연동 | Firestore Security Rules 적용 |
-| 챕터 담당자 변경 | 목업 동작, DB 미연동 | Firestore 업데이트 연결 |
-| 마크다운 내보내기 | 텍스트 복사만 | .md 파일 다운로드 |
-| 전체 문서 내보내기 | 없음 | PDF 또는 DOCX 내보내기 |
-| 텍스트 버전 히스토리 | 후순위 | `/history` 서브컬렉션 |
-| 챕터 순서 이동 | 목업 DnD 동작 | Firestore order 반영 |
+| 기능 | 현재 상태 | 작업 |
+|------|----------|------|
+| 멤버 초대 | 입력창 UI만 | Firebase Auth 이메일 초대 |
+| 역할 기반 권한 | 목업 동작 | Security Rules 적용 |
+| 챕터 담당자 | 목업 동작 | Firestore 업데이트 연결 |
+| 텍스트 버전 히스토리 | 없음 | `/history` 서브컬렉션 |
+| PPT 전체 머지 내보내기 | 버튼만 있음 (alert 처리) | Storage 파일 머지 |
+| 챕터 순서 | 목업 DnD 동작 | Firestore `order` 반영 |
+| RefView | 하드코딩 | 실제 파일 목록 연동 |
 
 ---
 
-## Phase 6 — 품질 및 배포 (~1주)
+## 비용
 
-### 테스트
-- Vitest + React Testing Library (단위 테스트)
-- Playwright (e2e: 로그인, 챕터 생성, 저장 플로우)
+Spark 플랜은 한도 초과 시 **요금 청구 없이 서비스 차단**. 예상치 못한 과금 없음.
+Blaze로 직접 업그레이드해야만 과금 시작.
 
-### 에러 처리
-- 네트워크 오류 toast 알림
-- Firestore 오프라인 캐시 활성화 (오프라인 대응)
-
-### 배포
-```bash
-# Firebase Hosting (순수 SPA, 서버 불필요)
-firebase deploy --only hosting
-```
-
-### 모니터링
-- Firebase Analytics (페이지 뷰, 기능 사용량)
-- Sentry (에러 트래킹)
+| 단계 | 예상 비용 |
+|------|---------|
+| 데모 ~ Phase 2 | $0 (Spark 무료) |
+| Phase 3~4 | $0 ~ 월 $20 (소규모 팀) |
+| PPT 고품질 썸네일 (선택) | Blaze 필요, 변환당 $0.0004 수준 |
 
 ---
 
-## 비용 정리
+## Phase 1 시작 전 확인 사항
 
-### 핵심 원칙
-Spark 플랜은 한도 초과 시 **요금 청구 없이 서비스 차단**. 예상치 못한 비용 발생 구조 없음.
-Blaze 플랜으로 업그레이드해야만 과금 시작.
-
-### 단계별 예상 비용
-
-| 단계 | 플랜 | 예상 비용 |
-|------|------|---------|
-| 데모 / 목업 배포 | Spark (무료) | **$0** |
-| Phase 1~2 (영속성 + 파일) | Spark (무료) | **$0** |
-| Phase 3~4 (실시간 협업 + 알림) | Spark 유지 또는 Blaze 전환 | **$0 ~ 월 $20** |
-| PPT 고품질 썸네일 (선택) | Blaze 필수 | 변환당 $0.0004 수준 |
-
-### Spark 무료 한도 (S-Core 소규모 팀 기준 충분)
-- Firestore: 읽기 50K/일, 쓰기 20K/일, 저장 1GB
-- Firebase Storage: **5GB** (파일 저장용)
-- Hosting: 전송 10GB/월
-- Auth: 50K MAU/월
-
-### 비용 최소화 설계 결정
-- 백엔드 서버 없음 (순수 SPA) → Cloud Run / 서버 비용 없음
-- 파일은 Firebase Storage 저장, Firestore 문서에 URL만 기록 → 읽기 쿼터 절약
-- onSnapshot은 활성 컴포넌트에만 구독, 반드시 cleanup → 불필요한 읽기 차단
-- Cloud Functions 미사용 (Phase 3 이전) → Blaze 불필요
-
----
-
-## 전체 일정 요약
-
-| Phase | 내용 | 예상 기간 | 우선순위 |
-|-------|------|---------|---------|
-| 1 | 데이터 영속성 + 인증 + 충돌 감지 | 3주 | 🔴 필수 |
-| 2 | 파일 처리 (Firebase Storage + PPTXjs) | 2주 | 🔴 필수 |
-| 3 | 실시간 협업 (presence + 잠금) | 2주 | 🟡 중요 |
-| 4 | 알림 | 1주 | 🟡 중요 |
-| 5 | 미완성 기능 완성 | 2주 | 🟢 필요 |
-| 6 | 품질 + 배포 | 1주 | 🔴 필수 |
-| **합계** | | **~11주** | |
-
----
-
-## 기술 스택 (프로덕션)
-
-```
-Frontend  React 19 + TypeScript + Vite + Tailwind v4
-Database  Firestore (실시간 동기화, onSnapshot cleanup 필수)
-Auth      Firebase Auth (Google OAuth)
-Storage   Firebase Storage (파일 저장, Spark 5GB 무료)
-Hosting   Firebase Hosting (SPA, 서버 없음)
-Thumbnail PPTXjs (클라이언트, Phase 2) → LibreOffice headless (Cloud Functions, 선택)
-충돌처리  버전 기반 낙관적 락 (Phase 1, 참조 구현 있음)
-```
-
----
-
-## Phase 1 시작 전 결정 사항
-
-1. **Firebase 프로젝트**: 신규 생성 vs 기존 S-Core 인프라 활용
-2. **인증 방식**: Google OAuth vs 사내 SSO (SAML)
-3. **접근 범위**: 에스코어 내부만 vs 고객사 계정도 허용
-4. **데이터 격리**: 프로젝트별 vs 회사별 (멀티테넌시)
+1. Firebase 프로젝트: 신규 생성 vs 기존 S-Core 인프라 활용
+2. 인증 방식: Google OAuth vs 사내 SSO (SAML)
+3. 접근 범위: 에스코어 내부만 vs 고객사 계정 포함
+4. 데이터 격리: 프로젝트별 vs 회사별 멀티테넌시

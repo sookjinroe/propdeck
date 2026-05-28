@@ -32,16 +32,6 @@ export default function EditorView({ chapter, chapters, onUpdateChapters, onBack
     });
   };
 
-  const downloadMarkdown = () => {
-    const text = (editorRef.current?.innerText || chapter.text || '').trim();
-    const blob = new Blob([text], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${chapter.name || '챕터'}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   const saveEdit = () => {
     if (editorRef.current) update({ text: editorRef.current.innerHTML });
@@ -136,12 +126,7 @@ export default function EditorView({ chapter, chapters, onUpdateChapters, onBack
               style={{ borderColor: 'rgb(var(--rule))', color: copied ? 'rgb(var(--forest))' : 'rgb(var(--stone))', borderRadius: 'var(--radius)', background: copied ? 'rgb(var(--forest-bg))' : 'transparent' }}>
               {copied ? '✓ 복사됨' : '📋 마크다운'}
             </button>
-            <button onClick={downloadMarkdown}
-              className="flex items-center gap-1 text-[10px] px-2 py-1 border transition-colors hover:bg-gray-50"
-              style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}
-              title="마크다운 파일로 저장">
-              ↓ .md
-            </button>
+
           </div>
         )}
         {!isEditing && (
