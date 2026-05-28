@@ -88,7 +88,7 @@ export default function Workspace({ project, onBack, onUpdate }: Props) {
           {view === 'fullview' && <FullView chapters={chapters} onGoToEditor={goToEditor} />}
           {view === 'ref' && <RefView />}
           {view === 'editor' && activeChapter && (
-            <EditorView chapter={activeChapter} chapters={chapters} onUpdateChapters={updateChapters} onBack={() => setView('overview')} />
+            <EditorView chapter={activeChapter} chapters={chapters} onUpdateChapters={updateChapters} onBack={() => setView('overview')} initialComments={project.comments} />
           )}
           {view === 'editor' && !activeChapter && (
             <div className="flex-1 flex items-center justify-center" style={{ color: 'rgb(var(--stone))' }}>

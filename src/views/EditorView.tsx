@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import type { Chapter } from '../types';
+import type { Chapter, Comment } from '../types';
 import { getChapterNumber } from '../lib/chapters';
 import CommentPanel from '../components/CommentPanel';
 import PptCard from '../components/PptCard';
@@ -13,9 +13,10 @@ const STATUS_OPTS = [
 interface Props {
   chapter: Chapter; chapters: Chapter[];
   onUpdateChapters: (chs: Chapter[]) => void; onBack: () => void;
+  initialComments?: Record<string, Comment[]>;
 }
 
-export default function EditorView({ chapter, chapters, onUpdateChapters, onBack }: Props) {
+export default function EditorView({ chapter, chapters, onUpdateChapters, onBack, initialComments }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
@@ -156,7 +157,7 @@ export default function EditorView({ chapter, chapters, onUpdateChapters, onBack
       </div>
 
       {/* Right: comments */}
-      <CommentPanel chapterId={chapter.id} />
+      <CommentPanel chapterId={chapter.id} initialComments={initialComments} />
     </div>
   );
 }

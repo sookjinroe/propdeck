@@ -24,6 +24,7 @@ export interface Member {
 export interface Project {
   id: string; name: string; client: string; emoji: string;
   progress: number; deadline: string; members: Member[]; chapters: Chapter[];
+  comments: Record<string, Comment[]>;
 }
 
 export interface SlideInfo {

@@ -9,8 +9,9 @@ const INITIAL: Record<string, Comment[]> = {
   ]
 };
 
-export default function CommentPanel({ chapterId }: { chapterId: string }) {
-  const [comments, setComments] = useState<Comment[]>(INITIAL[chapterId] || []);
+export default function CommentPanel({ chapterId, initialComments }: { chapterId: string; initialComments?: Record<string, Comment[]> }) {
+  const allComments = initialComments || INITIAL;
+  const [comments, setComments] = useState<Comment[]>(allComments[chapterId] || []);
   const [newText, setNewText] = useState('');
   const [showResolved, setShowResolved] = useState(false);
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
