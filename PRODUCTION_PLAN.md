@@ -101,7 +101,8 @@ useEffect(() => {
 
 ### 충돌 감지 (버전 기반 낙관적 락)
 
-검증된 참조 구현 있음. 저장 시 DB 최신 버전 확인 후 충돌이면 side-by-side diff UI 표시.
+검증된 참조 구현 있음. 저장 시 DB 최신 버전 확인 후 충돌이면 side-by-side UI 표시.
+서버 버전(읽기 전용) / 내 버전(편집 가능한 textarea) 나란히 표시. 차이 하이라이팅 없음. 둘 중 하나 선택하거나 내 버전을 수정 후 저장.
 
 ```typescript
 const handleSave = async () => {
