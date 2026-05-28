@@ -84,7 +84,7 @@ export default function Workspace({ project, onBack, onUpdate }: Props) {
           onUpdateChapters={updateChapters}
         />
         <main className="flex-1 flex flex-col overflow-hidden">
-          {view === 'overview' && <OverviewView chapters={chapters} onUpdateChapters={updateChapters} onGoToEditor={goToEditor} />}
+          {view === 'overview' && <OverviewView chapters={chapters} members={project.members} onUpdateChapters={updateChapters} onGoToEditor={goToEditor} />}
           {view === 'fullview' && <FullView chapters={chapters} onGoToEditor={goToEditor} />}
           {view === 'ref' && <RefView />}
           {view === 'editor' && activeChapter && (
@@ -98,7 +98,7 @@ export default function Workspace({ project, onBack, onUpdate }: Props) {
         </main>
       </div>
 
-      {showMembers && <MembersPanel members={project.members} onClose={() => setShowMembers(false)} />}
+      {showMembers && <MembersPanel members={project.members} onClose={() => setShowMembers(false)} onUpdateMembers={(members) => onUpdate({ ...project, members })} />}
     </div>
   );
 }

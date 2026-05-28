@@ -1,27 +1,30 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import type { Chapter } from '../types';
+import { useState, useRef, useCallback } from 'react';
+import type { Chapter, Member } from '../types';
 import { buildTree, flattenTree, getChapterNumber, normalizeOrders } from '../lib/chapters';
 import { TEMPLATES } from '../data';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Props {
   chapters: Chapter[];
+  members: Member[];
   onUpdateChapters: (chs: Chapter[]) => void;
   onGoToEditor: (id: string) => void;
 }
 
-const STATUS_LABELS = { done: '완료', review: '검토중', wip: '작성중', todo: '시작 전' };
-const STATUS_COLORS = {
+const STATUS_CYCLE = ['todo', 'wip', 'review', 'done'] as const;
+const STATUS_LABELS: Record<string, string> = { done: '완료', review: '검토중', wip: '작성중', todo: '시작 전' };
+const STATUS_COLORS: Record<string, string> = {
   done: 'rgb(var(--forest))', review: 'rgb(var(--amber))',
   wip: 'rgb(var(--navy))', todo: 'rgb(var(--stone))'
 };
 
-export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor }: Props) {
+export default function OverviewView({ chapters, members, onUpdateChapters, onGoToEditor }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dragSrcId, setDragSrcId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [showTemplate, setShowTemplate] = useState(false);
   const [selectedTmpl, setSelectedTmpl] = useState(0);
+  const [assigneePickerId, setAssigneePickerId] = useState<string | null>(null);
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const focusInput = (id: string) => {
@@ -34,18 +37,36 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
   const ordered = flattenTree(buildTree(chapters));
   const withIntent = chapters.filter(c => c.intent?.trim()).length;
 
-  // ── Chapter mutations ───────────────────────────────────────────────────
   const updateChapter = useCallback((id: string, patch: Partial<Chapter>) => {
     onUpdateChapters(chapters.map(c => c.id === id ? { ...c, ...patch } : c));
   }, [chapters, onUpdateChapters]);
+
+  const cycleStatus = useCallback((id: string) => {
+    const ch = chapters.find(c => c.id === id);
+    if (!ch) return;
+    const idx = STATUS_CYCLE.indexOf(ch.status as any);
+    const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+    updateChapter(id, { status: next });
+  }, [chapters, updateChapter]);
+
+  const assignMember = useCallback((chId: string, member: Member | null) => {
+    updateChapter(chId, {
+      assignee: member?.name ?? null,
+      assigneeInitial: member?.initial ?? null,
+      assigneeColor: member?.color ?? null,
+    });
+    setAssigneePickerId(null);
+  }, [updateChapter]);
 
   const addBelow = useCallback((id: string) => {
     const ch = chapters.find(c => c.id === id)!;
     const newId = 'ch_' + Date.now();
     const idx = chapters.findIndex(c => c.id === id);
-    const next: Chapter = { id: newId, name: '', parentId: ch.parentId, order: ch.order + 0.5,
+    const next: Chapter = {
+      id: newId, name: '', parentId: ch.parentId, order: ch.order + 0.5,
       status: 'todo', assignee: null, assigneeInitial: null, assigneeColor: null,
-      intent: '', rfp: [], pptVersions: [], attachments: [], text: '' };
+      intent: '', rfp: [], pptVersions: [], slides: [], attachments: [], text: ''
+    };
     const updated = [...chapters];
     updated.splice(idx + 1, 0, next);
     onUpdateChapters(normalizeOrders(updated));
@@ -56,9 +77,11 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
   const addFirst = useCallback(() => {
     const newId = 'ch_' + Date.now();
     const roots = chapters.filter(c => !c.parentId);
-    const ch: Chapter = { id: newId, name: '', parentId: null, order: roots.length + 1,
+    const ch: Chapter = {
+      id: newId, name: '', parentId: null, order: roots.length + 1,
       status: 'todo', assignee: null, assigneeInitial: null, assigneeColor: null,
-      intent: '', rfp: [], pptVersions: [], attachments: [], text: '' };
+      intent: '', rfp: [], pptVersions: [], slides: [], attachments: [], text: ''
+    };
     onUpdateChapters(normalizeOrders([...chapters, ch]));
     setSelectedId(newId);
     focusInput(newId);
@@ -68,12 +91,10 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
     const flat = flattenTree(buildTree(chapters));
     const idx = flat.findIndex(e => e.ch.id === id);
     if (idx <= 0) { focusInput(id); return; }
-    const ch = chapters.find(c => c.id === id)!;
     const prev = flat[idx - 1];
     if (flat[idx].depth > prev.depth) { focusInput(id); return; }
     onUpdateChapters(normalizeOrders(chapters.map(c => c.id === id ? { ...c, parentId: prev.ch.id } : c)));
-    setSelectedId(id);
-    focusInput(id);
+    setSelectedId(id); focusInput(id);
   }, [chapters, onUpdateChapters]);
 
   const outdent = useCallback((id: string) => {
@@ -81,24 +102,21 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
     if (!ch.parentId) { focusInput(id); return; }
     const parent = chapters.find(c => c.id === ch.parentId);
     onUpdateChapters(normalizeOrders(chapters.map(c => c.id === id ? { ...c, parentId: parent?.parentId ?? null } : c)));
-    setSelectedId(id);
-    focusInput(id);
+    setSelectedId(id); focusInput(id);
   }, [chapters, onUpdateChapters]);
 
   const deleteChapter = useCallback((id: string) => {
     const kids = chapters.filter(c => c.parentId === id);
-    const msg = kids.length
-      ? `"${chapters.find(c=>c.id===id)?.name||'챕터'}" 및 하위 ${kids.length}개를 삭제할까요?`
-      : `"${chapters.find(c=>c.id===id)?.name||'챕터'}"를 삭제할까요?`;
+    const name = chapters.find(c => c.id === id)?.name || '챕터';
+    const msg = kids.length ? `"${name}" 및 하위 ${kids.length}개를 삭제할까요?` : `"${name}"를 삭제할까요?`;
     if (!confirm(msg)) return;
     const toDelete = new Set<string>();
-    const collect = (cid: string) => { toDelete.add(cid); chapters.filter(c=>c.parentId===cid).forEach(c=>collect(c.id)); };
+    const collect = (cid: string) => { toDelete.add(cid); chapters.filter(c => c.parentId === cid).forEach(c => collect(c.id)); };
     collect(id);
     if (selectedId && toDelete.has(selectedId)) setSelectedId(null);
     onUpdateChapters(normalizeOrders(chapters.filter(c => !toDelete.has(c.id))));
   }, [chapters, onUpdateChapters, selectedId]);
 
-  // ── Keyboard handler ────────────────────────────────────────────────────
   const onKeyDown = useCallback((e: React.KeyboardEvent, id: string) => {
     if (e.key === 'Enter') { e.preventDefault(); addBelow(id); }
     else if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); indent(id); }
@@ -106,7 +124,6 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
     else if (e.key === 'Escape') { e.preventDefault(); setSelectedId(null); (e.target as HTMLElement).blur(); }
   }, [addBelow, indent, outdent]);
 
-  // ── Drag-and-drop ───────────────────────────────────────────────────────
   const onDragStart = (id: string) => setDragSrcId(id);
   const onDragOver = (e: React.DragEvent, id: string) => { e.preventDefault(); setDragOverId(id); };
   const onDragLeave = () => setDragOverId(null);
@@ -122,16 +139,22 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
     setDragSrcId(null);
   };
 
-  // ── Template ─────────────────────────────────────────────────────────────
   const applyTemplate = () => {
     const tmpl = TEMPLATES[selectedTmpl];
     onUpdateChapters(tmpl.chapters.map((name, i) => ({
-      id: 'ch_t' + (i+1), name, parentId: null, order: i+1,
+      id: 'ch_t' + (i + 1), name, parentId: null, order: i + 1,
       status: 'todo' as const, assignee: null, assigneeInitial: null, assigneeColor: null,
-      intent: '', rfp: [], pptVersions: [], attachments: [], text: ''
+      intent: '', rfp: [], pptVersions: [], slides: [], attachments: [], text: ''
     })));
     setShowTemplate(false);
     setTimeout(() => focusInput('ch_t1'), 30);
+  };
+
+  // Close assignee picker on outside click
+  const handleTableClick = (e: React.MouseEvent) => {
+    if (!(e.target as Element).closest('[data-assignee-picker]')) {
+      setAssigneePickerId(null);
+    }
   };
 
   if (chapters.length === 0) return (
@@ -139,7 +162,7 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
       <div className="text-center max-w-sm">
         <p className="text-5xl mb-5 opacity-20">≡</p>
         <h2 className="font-serif text-xl mb-2" style={{ color: 'rgb(var(--ink))' }}>아직 챕터가 없어요</h2>
-        <p className="text-sm mb-6" style={{ color: 'rgb(var(--stone))' }}>제안서 구조를 직접 만들거나<br/>템플릿으로 시작하세요</p>
+        <p className="text-sm mb-6" style={{ color: 'rgb(var(--stone))' }}>제안서 구조를 직접 만들거나<br />템플릿으로 시작하세요</p>
         <div className="flex gap-3 justify-center">
           <button onClick={addFirst} className="px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-80"
             style={{ background: 'rgb(var(--ink))', color: 'rgb(var(--parchment))', borderRadius: 'var(--radius)' }}>
@@ -158,28 +181,41 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* View bar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b shrink-0" style={{ background: 'rgb(var(--paper))', borderColor: 'rgb(var(--rule))' }}>
+      <div className="flex items-center justify-between px-6 py-3 border-b shrink-0"
+        style={{ background: 'rgb(var(--paper))', borderColor: 'rgb(var(--rule))' }}>
         <div className="flex items-center gap-4">
-          <h2 className="font-serif text-base" style={{ color: 'rgb(var(--ink))' }}>목차 / 인텐트</h2>
+          <h2 className="font-serif text-base" style={{ color: 'rgb(var(--ink))' }}>챕터 브리프</h2>
           <div className="flex items-center gap-3 text-xs" style={{ color: 'rgb(var(--stone))' }}>
-            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-sm inline-block" style={{ background: 'rgb(var(--forest))' }} />{withIntent} 작성</span>
-            {chapters.length - withIntent > 0 && <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-sm inline-block" style={{ background: 'rgb(var(--rule))' }} />{chapters.length - withIntent} 미작성</span>}
+            <span className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-sm inline-block" style={{ background: 'rgb(var(--forest))' }} />
+              {withIntent} 인텐트 작성
+            </span>
+            {chapters.length - withIntent > 0 && (
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-sm inline-block" style={{ background: 'rgb(var(--rule))' }} />
+                {chapters.length - withIntent} 미작성
+              </span>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs" style={{ color: 'rgb(var(--stone))' }}>인텐트 변경 시 코멘트로 작성자에게 알려주세요</span>
-          <button onClick={() => setShowTemplate(true)} className="text-xs px-3 py-1 border transition-colors hover:bg-gray-50" style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>템플릿</button>
+          <button onClick={() => setShowTemplate(true)} className="text-xs px-3 py-1 border transition-colors hover:bg-gray-50"
+            style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>
+            템플릿
+          </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto" onClick={handleTableClick}>
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="text-left text-[10px] font-semibold tracking-widest uppercase" style={{ color: 'rgb(var(--stone))' }}>
+            <tr className="text-left text-[10px] font-semibold tracking-widest uppercase"
+              style={{ color: 'rgb(var(--stone))' }}>
               <th className="px-5 py-2.5 border-b font-semibold w-64" style={{ borderColor: 'rgb(var(--rule))' }}>챕터</th>
               <th className="px-4 py-2.5 border-b font-semibold" style={{ borderColor: 'rgb(var(--rule))' }}>인텐트</th>
-              <th className="px-4 py-2.5 border-b font-semibold w-28" style={{ borderColor: 'rgb(var(--rule))' }}>담당자</th>
+              <th className="px-4 py-2.5 border-b font-semibold w-36" style={{ borderColor: 'rgb(var(--rule))' }}>담당자</th>
               <th className="px-4 py-2.5 border-b font-semibold w-24" style={{ borderColor: 'rgb(var(--rule))' }}>상태</th>
             </tr>
           </thead>
@@ -201,6 +237,7 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
                     background: isSel ? 'rgb(var(--rust-bg))' : 'transparent',
                     borderTop: isDragOver ? '2px solid rgb(var(--rust))' : undefined,
                   }}>
+
                   {/* Chapter name */}
                   <td className="border-b" style={{ borderColor: 'rgb(var(--rule))' }}>
                     <div className="flex items-center gap-1.5 px-3 py-1.5" style={{ paddingLeft: `${12 + depth * 16}px` }}>
@@ -222,6 +259,7 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
                         style={{ color: 'rgb(var(--stone))' }}>×</button>
                     </div>
                   </td>
+
                   {/* Intent */}
                   <td className="border-b px-4 py-1" style={{ borderColor: 'rgb(var(--rule))' }}>
                     <textarea
@@ -235,21 +273,62 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
                       style={{ color: 'rgb(var(--ink))' }}
                     />
                   </td>
-                  {/* Assignee */}
+
+                  {/* Assignee — click to pick */}
                   <td className="border-b px-4 py-2" style={{ borderColor: 'rgb(var(--rule))' }}>
-                    {ch.assignee ? (
-                      <div className="flex items-center gap-1.5">
-                        <div className={`w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center av-${ch.assigneeColor}`}>{ch.assigneeInitial}</div>
-                        <span className="text-xs" style={{ color: 'rgb(var(--ink))' }}>{ch.assignee}</span>
-                      </div>
-                    ) : <span className="text-xs" style={{ color: 'rgb(var(--stone))' }}>미할당</span>}
+                    <div className="relative" data-assignee-picker>
+                      <button
+                        onClick={e => { e.stopPropagation(); setAssigneePickerId(assigneePickerId === ch.id ? null : ch.id); }}
+                        className="flex items-center gap-1.5 group/av hover:opacity-70 transition-opacity">
+                        {ch.assignee ? (
+                          <>
+                            <div className={`w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center av-${ch.assigneeColor}`}>{ch.assigneeInitial}</div>
+                            <span className="text-xs" style={{ color: 'rgb(var(--ink))' }}>{ch.assignee}</span>
+                          </>
+                        ) : (
+                          <span className="text-xs border border-dashed px-2 py-0.5 transition-colors"
+                            style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>
+                            할당
+                          </span>
+                        )}
+                      </button>
+
+                      {/* Assignee picker dropdown */}
+                      {assigneePickerId === ch.id && (
+                        <div className="absolute left-0 top-full mt-1 z-20 border shadow-lg py-1 min-w-[140px]"
+                          style={{ background: 'rgb(var(--paper))', borderColor: 'rgb(var(--rule))', borderRadius: 'var(--radius)' }}
+                          onClick={e => e.stopPropagation()}>
+                          {members.map(m => (
+                            <button key={m.name} onClick={() => assignMember(ch.id, m)}
+                              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 transition-colors text-left"
+                              style={{ background: ch.assignee === m.name ? 'rgb(var(--rust-bg))' : undefined }}>
+                              <div className={`w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center av-${m.color} shrink-0`}>{m.initial}</div>
+                              <span style={{ color: 'rgb(var(--ink))' }}>{m.name}</span>
+                              {m.isMe && <span className="text-[10px]" style={{ color: 'rgb(var(--stone))' }}>나</span>}
+                              {ch.assignee === m.name && <span className="ml-auto text-[10px]" style={{ color: 'rgb(var(--rust))' }}>✓</span>}
+                            </button>
+                          ))}
+                          <div className="border-t mx-2 my-1" style={{ borderColor: 'rgb(var(--rule))' }} />
+                          <button onClick={() => assignMember(ch.id, null)}
+                            className="w-full px-3 py-1.5 text-xs text-left hover:bg-gray-50 transition-colors"
+                            style={{ color: 'rgb(var(--stone))' }}>
+                            할당 해제
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </td>
-                  {/* Status */}
+
+                  {/* Status — click to cycle */}
                   <td className="border-b px-4 py-2" style={{ borderColor: 'rgb(var(--rule))' }}>
-                    <span className="flex items-center gap-1 text-xs font-medium" style={{ color: STATUS_COLORS[ch.status] }}>
-                      <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: STATUS_COLORS[ch.status] }} />
-                      {STATUS_LABELS[ch.status]}
-                    </span>
+                    <button
+                      onClick={e => { e.stopPropagation(); cycleStatus(ch.id); }}
+                      title="클릭해서 상태 변경"
+                      className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-60">
+                      <span className="w-1.5 h-1.5 rounded-full inline-block shrink-0"
+                        style={{ background: STATUS_COLORS[ch.status] }} />
+                      <span style={{ color: STATUS_COLORS[ch.status] }}>{STATUS_LABELS[ch.status]}</span>
+                    </button>
                   </td>
                 </tr>
               );
@@ -259,20 +338,24 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
 
         {/* Add row */}
         <div className="px-4 py-2 border-b flex items-center gap-3" style={{ borderColor: 'rgb(var(--rule))' }}>
-          <button onClick={addFirst} className="text-xs font-medium flex items-center gap-1.5 transition-colors hover:opacity-70"
+          <button onClick={addFirst} className="text-xs font-medium transition-colors hover:opacity-70"
             style={{ color: 'rgb(var(--stone))' }}>
             + 챕터 추가
           </button>
           <span className="text-[10px]" style={{ color: 'rgb(var(--rule))' }}>·</span>
-          <button onClick={() => setShowTemplate(true)} className="text-xs flex items-center gap-1 transition-colors hover:opacity-70"
-            style={{ color: 'rgb(var(--stone))' }}>템플릿</button>
+          <button onClick={() => setShowTemplate(true)} className="text-xs transition-colors hover:opacity-70"
+            style={{ color: 'rgb(var(--stone))' }}>
+            템플릿
+          </button>
         </div>
 
         {/* Keyboard hints */}
         <div className="flex gap-4 px-5 py-2 text-[10px]" style={{ color: 'rgb(var(--stone))' }}>
-          {[['Enter','아래 추가'], ['Tab','들여쓰기'], ['Shift+Tab','내어쓰기'], ['Esc','해제']].map(([k,v]) => (
+          {[['Enter', '아래 추가'], ['Tab', '들여쓰기'], ['Shift+Tab', '내어쓰기'], ['Esc', '해제']].map(([k, v]) => (
             <span key={k} className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 border text-[9px] font-mono" style={{ borderColor: 'rgb(var(--rule))', borderRadius: '2px', background: 'rgb(var(--parchment))' }}>{k}</kbd>{v}
+              <kbd className="px-1.5 py-0.5 border text-[9px] font-mono"
+                style={{ borderColor: 'rgb(var(--rule))', borderRadius: '2px', background: 'rgb(var(--parchment))' }}>{k}</kbd>
+              {v}
             </span>
           ))}
         </div>
@@ -283,7 +366,9 @@ export default function OverviewView({ chapters, onUpdateChapters, onGoToEditor 
   );
 }
 
-function TemplateDialog({ open, onClose, selected, onSelect, onApply }: { open: boolean; onClose: () => void; selected: number; onSelect: (i: number) => void; onApply: () => void; }) {
+function TemplateDialog({ open, onClose, selected, onSelect, onApply }: {
+  open: boolean; onClose: () => void; selected: number; onSelect: (i: number) => void; onApply: () => void;
+}) {
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent style={{ background: 'rgb(var(--paper))', borderColor: 'rgb(var(--rule))' }}>
@@ -303,7 +388,9 @@ function TemplateDialog({ open, onClose, selected, onSelect, onApply }: { open: 
         <div className="flex justify-end gap-2 pt-2">
           <button onClick={onClose} className="px-4 py-2 text-sm" style={{ color: 'rgb(var(--stone))' }}>취소</button>
           <button onClick={onApply} className="px-5 py-2 text-sm font-semibold"
-            style={{ background: 'rgb(var(--ink))', color: 'rgb(var(--parchment))', borderRadius: 'var(--radius)' }}>적용</button>
+            style={{ background: 'rgb(var(--ink))', color: 'rgb(var(--parchment))', borderRadius: 'var(--radius)' }}>
+            적용
+          </button>
         </div>
       </DialogContent>
     </Dialog>

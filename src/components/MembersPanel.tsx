@@ -1,5 +1,12 @@
 import type { Member } from '../types';
-export default function MembersPanel({ members, onClose }: { members: Member[]; onClose: () => void }) {
+export default function MembersPanel({ members, onClose, onUpdateMembers }: {
+  members: Member[];
+  onClose: () => void;
+  onUpdateMembers?: (members: Member[]) => void;
+}) {
+  const updateRole = (name: string, role: Member['role']) => {
+    onUpdateMembers?.(members.map(m => m.name === name ? { ...m, role } : m));
+  };
   return (
     <div className="fixed inset-0 z-50 flex" onClick={onClose} style={{ background: 'rgba(0,0,0,0.3)' }}>
       <div className="ml-auto w-80 h-full flex flex-col" style={{ background: 'rgb(var(--paper))' }} onClick={e => e.stopPropagation()}>
@@ -22,8 +29,12 @@ export default function MembersPanel({ members, onClose }: { members: Member[]; 
                 <p className="text-sm font-medium" style={{ color: 'rgb(var(--ink))' }}>{m.name}{m.isMe && <span className="text-xs ml-1" style={{ color: 'rgb(var(--stone))' }}>(나)</span>}</p>
                 <p className="text-xs" style={{ color: 'rgb(var(--stone))' }}>{m.email}</p>
               </div>
-              <select className="text-xs border bg-transparent" style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>
-                {['PM','작성자','뷰어'].map(r => <option key={r} selected={r === m.role}>{r}</option>)}
+              <select
+                value={m.role}
+                onChange={e => updateRole(m.name, e.target.value as Member['role'])}
+                className="text-xs border bg-transparent px-1 py-0.5"
+                style={{ borderColor: 'rgb(var(--rule))', color: 'rgb(var(--stone))', borderRadius: 'var(--radius)' }}>
+                {(['PM','작성자','뷰어'] as const).map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
           ))}

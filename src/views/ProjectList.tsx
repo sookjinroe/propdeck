@@ -23,7 +23,7 @@ export default function ProjectList({ projects, onEnter, onCreate }: Props) {
       id: 'p_' + Date.now(), name: name.trim(),
       client: client.trim() || '고객사 미입력',
       emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-      progress: 0, deadline: '—', members: [MEMBERS[0]], chapters: [],
+      progress: 0, deadline: '—', members: [MEMBERS[0]], chapters: [], comments: {},
     };
     onCreate(p);
     setShowNew(false); setName(''); setClient('');
