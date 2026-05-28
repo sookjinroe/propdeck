@@ -81,28 +81,36 @@ match /projects/{projectId} {
 
 ## Phase 2 — 파일 처리 (~2주)
 
-> **목표**: 실제 PPT 파일이 업로드되고 버전 관리됨
+> **목표**: 실제 PPT 파일이 업로드되고 버전 관리됨  
+> **플랜**: Spark 무료 플랜으로 가능 (Cloud Functions 미사용)
 
 ### 2-1. Firebase Storage 연동
 - PPTX 파일 업로드 → `gs://bucket/projects/{id}/chapters/{id}/ppt/{version}/`
 - 업로드 진행률 표시
 - 다운로드 URL 생성 후 Firestore에 저장
 
-### 2-2. PPT 썸네일 서버사이드 변환
+### 2-2. PPT 썸네일 (단계적 접근)
 
-현재 CSS mock → 실제 슬라이드 이미지로 교체.
+현재 CSS mock → 실제 슬라이드 이미지. **Blaze 플랜 불필요.**
 
-**Cloud Functions로 구현:**
+**Phase 2: 브라우저 파싱 (무료)**
+`PPTXjs` 라이브러리로 클라이언트에서 직접 슬라이드 렌더링.
+서버 불필요, Spark 플랜에서 동작. 복잡한 애니메이션·특수 폰트는 부분적으로 깨질 수 있음.
+
 ```
-PPTX 업로드 트리거
-→ Cloud Function 실행
-→ LibreOffice headless로 PNG 변환 (슬라이드별)
-→ Storage에 thumbnails/ 저장
-→ Firestore에 thumbnailUrls[] 업데이트
-→ SlideStrip에서 <img src={url} /> 렌더링
+PPTX 업로드 → Storage 저장
+→ 클라이언트에서 PPTXjs로 파싱
+→ Canvas로 슬라이드 렌더링 → 썸네일 표시
 ```
 
-`SlideInfo` 타입에 `thumbnailUrl?: string` 추가, 있으면 이미지, 없으면 현재 CSS mock으로 fallback.
+**향후 품질 개선이 필요할 때: Cloud Functions (Blaze 플랜)**
+```
+PPTX 업로드 트리거 → Cloud Function
+→ LibreOffice headless PNG 변환
+→ Storage thumbnails/ 저장 → Firestore thumbnailUrls[] 업데이트
+```
+
+`SlideInfo`에 `thumbnailUrl?: string` 추가. 있으면 이미지, 없으면 CSS mock fallback.
 
 ---
 
@@ -149,13 +157,14 @@ PPTX 업로드 트리거
 
 | 기능 | 현재 상태 | 작업 내용 |
 |------|----------|---------|
-| 챕터 담당자 변경 | UI 없음 | 드롭다운 + Firestore 업데이트 |
 | 멤버 초대 | 입력창만 | Firebase Auth 이메일 초대 |
-| 역할 기반 권한 | UI만 | Security Rules 적용 |
+| 역할 기반 권한 | 목업 동작, DB 미연동 | Firestore Security Rules 적용 |
+| 챕터 담당자 변경 | 목업 동작, DB 미연동 | Firestore 업데이트 연결 |
+| 알림 클릭 → 챕터 이동 | UI만 | 클릭 시 해당 에디터로 라우팅 |
 | 마크다운 내보내기 | 텍스트 복사만 | .md 파일 다운로드 |
 | 전체 문서 내보내기 | 없음 | PDF 또는 DOCX 내보내기 |
 | 텍스트 버전 히스토리 | 후순위 | `/history` 서브컬렉션 |
-| 챕터 순서 이동 | DnD만 | 서버 반영 |
+| 챕터 순서 이동 | 목업 DnD 동작 | Firestore order 반영 |
 
 ---
 
@@ -184,6 +193,24 @@ gcloud run deploy propdeck
 
 ---
 
+## 플랜별 비용 정리
+
+### 데모 / 내부 테스트 단계
+Firebase Spark 플랜(무료)으로 충분. 신용카드 등록 불필요.
+- Hosting 10GB/월, Firestore 50K 읽기/일, Storage 1GB 이내면 $0
+
+### Phase 1~2 (영속성 + 파일 처리)
+Spark 플랜 유지 가능. PPTXjs 클라이언트 파싱 방식 사용 시 Cloud Functions 불필요.
+
+### Phase 3 이후 (실시간 협업 + 알림)
+Blaze 플랜 전환 권장. 단, Blaze도 Spark 무료 한도 포함.
+소규모 내부 툴(DAU 50명 이하) 기준 **월 $5~20 예상**.
+
+### Cloud Functions 도입 시점 (PPT 고품질 썸네일)
+Blaze 플랜 필수. 변환 1회당 약 $0.0004 수준으로 실질 비용 미미.
+
+---
+
 ## 전체 일정 요약
 
 | Phase | 내용 | 예상 기간 | 우선순위 |
@@ -207,7 +234,7 @@ Auth      Firebase Auth (Google OAuth)
 Storage   Firebase Storage (파일)
 Functions Cloud Functions (PPT 변환, 알림)
 Hosting   Firebase Hosting
-Thumbnail LibreOffice headless (Cloud Functions)
+Thumbnail PPTXjs (클라이언트, Phase 2) → LibreOffice headless (Cloud Functions, 선택 업그레이드)
 ```
 
 ---
