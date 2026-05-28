@@ -206,3 +206,17 @@ body::before {
 [contenteditable]:focus {
   outline: none;
 }
+
+/* ── Scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--rule)) transparent;
+}
+*::-webkit-scrollbar { width: 5px; height: 5px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgb(var(--rule));
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgb(var(--stone)); }
+*::-webkit-scrollbar-corner { background: transparent; }

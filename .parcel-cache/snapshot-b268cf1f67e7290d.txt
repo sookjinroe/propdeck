@@ -8,7 +8,7 @@
 41/home/claude/propdeck/node_modules/parcel1779861734168723551 0
 58/home/claude/propdeck/node_modules/parcel-resolver-tspaths1779861734168723551 0
 39/home/claude/propdeck/node_modules/vaul1779861357980719948 0
-45/home/claude/propdeck/node_modules/.vite-temp1779945383209099762 1
+45/home/claude/propdeck/node_modules/.vite-temp1779945578393111365 1
 54/home/claude/propdeck/node_modules/tailwindcss-animate1779861339160719768 0
 47/home/claude/propdeck/node_modules/lucide-react1779861344440719819 0
 112/home/claude/propdeck/node_modules/.pnpm/@radix-ui+primitive@1.1.3/node_modules/@radix-ui/primitive/package.json1779861347364719847 0
@@ -4746,10 +4746,6 @@
 88/home/claude/propdeck/node_modules/.pnpm/thenify@3.3.1/node_modules/thenify/package.json1779861338524719762 0
 104/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/cy/_lib/localize.js1779861354496719915 0
 98/home/claude/propdeck/node_modules/.pnpm/semver@7.8.1/node_modules/semver/ranges/to-comparators.js1779861330636719686 0
-167/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+tsconfig-utils@8.60.0_typescript@6.0.3/node_modules/@typescript-eslint/tsconfig-utils/node_modules/.bin/tsc1779861333233943054 0
-182/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/computed-types/dist/computed-types.modern.mjs1779861353548719906 0
-98/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/minWithOptions.js1779861354520719915 0
-84/home/claude/propdeck/node_modules/.pnpm/thenify@3.3.1/node_modules/thenify/index.js1779861338524719762 0
 67/home/claude/propdeck/node_modules/.pnpm/thenify@3.3.1/node_modules1779861339088719767 1
 54/home/claude/propdeck/node_modules/.pnpm/thenify@3.3.11779861338996719766 1
 128/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/bar-chart.mjs1779861342344719799 0
@@ -7090,9 +7086,9 @@
 103/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/eachQuarterOfInterval.cjs1779861354104719911 0
 86/home/claude/propdeck/node_modules/.pnpm/anymatch@3.1.3/node_modules/anymatch/index.js1779861337080719748 0
 85/home/claude/propdeck/node_modules/.pnpm/anymatch@3.1.3/node_modules/anymatch/LICENSE1779861337080719748 0
+245/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.60.0_@typescript-eslint+parser@8.60.0_eslint@10.4.0__7527672befd0b8c69a72f17f1d208ee2/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unsafe-member-access.js1779861330140719682 0
 144/home/claude/propdeck/node_modules/.pnpm/@parcel+optimizer-image@2.16.4_@parcel+core@2.16.4_@swc+helpers@0.5.21_/node_modules/@parcel/diagnostic1779861733920723549 0
 254/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.60.0_@typescript-eslint+parser@8.60.0_eslint@10.4.0__7527672befd0b8c69a72f17f1d208ee2/node_modules/@typescript-eslint/eslint-plugin/dist/rules/explicit-module-boundary-types.d.ts1779861330148719682 0
-245/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.60.0_@typescript-eslint+parser@8.60.0_eslint@10.4.0__7527672befd0b8c69a72f17f1d208ee2/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unsafe-member-access.js1779861330140719682 0
 88/home/claude/propdeck/node_modules/.pnpm/zod@4.4.3/node_modules/zod/src/v4/locales/yo.ts1779861326256719644 0
 63/home/claude/propdeck/node_modules/.pnpm/node_modules/js-tokens1779861333148719710 0
 134/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/badge-alert.mjs.map1779861341968719795 0
@@ -7212,8 +7208,6 @@
 87/home/claude/propdeck/node_modules/.pnpm/zod@4.4.3/node_modules/zod/v4/locales/yo.d.cts1779861326104719643 0
 153/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/zod/src/index.ts1779861353564719906 0
 121/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb-data-v1/libraries/liblmdb/LICENSE1779861733996697541 0
-127/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/currency.mjs1779861342384719799 0
-119/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb-data-v1/libraries/liblmdb/mdb.c1779861734001586984 0
 91/home/claude/propdeck/node_modules/.pnpm/ajv@6.15.0/node_modules/ajv/lib/dot/multipleOf.jst1779861325588719638 0
 120/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb-data-v1/libraries/liblmdb/lmdb.h1779861734011290962 0
 124/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb-data-v1/libraries/liblmdb/mdb_load.11779861733998437753 0
@@ -7756,7 +7750,7 @@
 95/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0/node_modules/eslint/lib/types/index.d.ts1779861321684719601 0
 85/home/claude/propdeck/node_modules/.pnpm/zod@4.4.3/node_modules/zod/v4/locales/sl.cjs1779861326088719643 0
 162/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/arktype/dist/arktype.d.ts1779861353556719906 0
-50/home/claude/propdeck/node_modules/.pnpm/lock.yaml1779945409793101343 0
+50/home/claude/propdeck/node_modules/.pnpm/lock.yaml1779945587009111877 0
 142/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/git-commit-vertical.mjs.map1779861342116719796 0
 91/home/claude/propdeck/node_modules/.pnpm/tailwindcss@3.4.1/node_modules/tailwindcss/src/cli1779861339072719767 1
 87/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/esutils1779861339004719767 0
@@ -8138,7 +8132,7 @@
 94/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/nextSunday.js1779861354524719915 0
 116/home/claude/propdeck/node_modules/.pnpm/html-select@2.3.24/node_modules/html-select/test/attr_and_deeper/index.html1779861725780723471 0
 97/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/uz-Cyrl/_lib1779861357900719948 1
-36/home/claude/propdeck/pnpm-lock.yaml1779945409789101342 0
+36/home/claude/propdeck/pnpm-lock.yaml1779945587009111877 0
 127/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/user.mjs.map1779861342300719798 0
 138/home/claude/propdeck/node_modules/.pnpm/@parcel+fs@2.16.4_@parcel+core@2.16.4_@swc+helpers@0.5.21_/node_modules/@parcel/fs/lib/browser.js1779861733128723541 0
 167/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/arktype/dist/arktype.module.js1779861353504719905 0
@@ -9734,7 +9728,7 @@
 113/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/kn/_lib/formatDistance.d.cts1779861354312719913 0
 79/home/claude/propdeck/node_modules/.pnpm/trumpet@1.7.2/node_modules/trumpet/lib1779861734072723550 1
 110/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/sl/_lib/formatDistance.js1779861354456719915 0
-35/home/claude/propdeck/src/index.css1779872849444823738 0
+35/home/claude/propdeck/src/index.css1779945574849878624 0
 158/home/claude/propdeck/node_modules/.pnpm/react-day-picker@10.0.1_@types+react@19.2.15_react@19.2.6/node_modules/react-day-picker/dist/cjs/labels/labelNav.d.ts1779861353828719909 0
 111/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/regions/DZ.js1779861332396719703 0
 87/home/claude/propdeck/node_modules/.pnpm/tailwindcss@3.4.1/node_modules/tailwindcss/src1779861339072719767 1
@@ -11323,7 +11317,7 @@
 126/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/link-rel-preload.js1779861332408719703 0
 129/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/image-plus.mjs1779861342436719799 0
 119/home/claude/propdeck/node_modules/.pnpm/tailwindcss@3.4.1/node_modules/tailwindcss/types/generated/corePluginList.d.ts1779861336036719738 0
-40/home/claude/propdeck/node_modules/.pnpm1779945409805101343 1
+40/home/claude/propdeck/node_modules/.pnpm1779945587017111877 1
 108/home/claude/propdeck/node_modules/.pnpm/weak-lru-cache@1.2.2/node_modules/weak-lru-cache/tests/benchmark.js1779861732824723538 0
 154/home/claude/propdeck/node_modules/.pnpm/react-day-picker@10.0.1_@types+react@19.2.15_react@19.2.6/node_modules/react-day-picker/dist/cjs/utils/index.d.ts1779861353796719908 0
 161/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/io-ts/src/arrayToPath.ts1779861353556719906 0
@@ -11973,7 +11967,7 @@
 90/home/claude/propdeck/node_modules/.pnpm/@floating-ui+core@1.7.5/node_modules/@floating-ui1779861350864719880 1
 119/home/claude/propdeck/node_modules/.pnpm/sucrase@3.35.1/node_modules/sucrase/dist/types/parser/traverser/statement.d.ts1779861336456719742 0
 132/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/sort-desc.mjs.map1779861342268719798 0
-37/home/claude/propdeck/dist/index.html1779945418337101851 0
+37/home/claude/propdeck/dist/index.html1779945589993112054 0
 103/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/ckb/_lib/match.cjs1779861354240719912 0
 168/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+scope-manager@8.60.0/node_modules/@typescript-eslint/scope-manager/dist/definition/TSEnumNameDefinition.d.ts1779861331960719699 0
 41/home/claude/propdeck/src/lib/chapters.ts1779872098629250534 0
@@ -12050,18 +12044,6 @@
 110/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/is/_lib/formatRelative.js1779861354472719915 0
 152/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+scope-manager@8.60.0/node_modules/@typescript-eslint/scope-manager/dist/lib/es2022.intl.d.ts1779861331940719699 0
 117/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/picture.js1779861332416719703 0
-91/home/claude/propdeck/node_modules/.pnpm/fraction.js@5.3.4/node_modules/fraction.js/LICENSE1779861336744719745 0
-129/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/house-plug.mjs1779861342432719799 0
-111/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/regions/AU.js1779861332380719703 0
-151/home/claude/propdeck/node_modules/.pnpm/@parcel+workers@2.16.4_@parcel+core@2.16.4_@swc+helpers@0.5.21_/node_modules/@parcel/workers/src/childState.js1779861727496723487 0
-99/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/be-tarask/_lib1779861357900719948 1
-67/home/claude/propdeck/node_modules/.pnpm/@lmdb+lmdb-linux-x64@2.8.51779861733704723546 1
-124/home/claude/propdeck/node_modules/.pnpm/@radix-ui+react-context@1.1.3_@types+react@19.2.15_react@19.2.6/node_modules/@types1779861350792719879 1
-94/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/yearsToMonths.js1779861354556719916 0
-102/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lz4/lib/dll/example1779861734021234852 1
-127/home/claude/propdeck/node_modules/.pnpm/@babel+generator@7.29.7/node_modules/@babel/generator/lib/generators/deprecated.js.map1779861326884719651 0
-138/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/message-square-plus.mjs1779861342484719800 0
-135/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/document-scrollingelement.js1779861332396719703 0
 154/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+scope-manager@8.60.0/node_modules/@typescript-eslint/scope-manager/dist/lib/esnext.object.d.ts1779861331952719699 0
 89/home/claude/propdeck/node_modules/.pnpm/word-wrap@1.2.5/node_modules/word-wrap/README.md1779861326648719648 0
 137/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/mirror-rectangular.mjs1779861342484719800 0
@@ -13454,6 +13436,12 @@
 113/home/claude/propdeck/node_modules/.pnpm/html-tokenize@1.2.5/node_modules/html-tokenize/test/loose_angle_brackets1779861734084723550 1
 178/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+typescript-estree@8.60.0_typescript@6.0.3/node_modules/@typescript-eslint/typescript-estree/node_modules/.bin/tsserver1779861333224719711 0
 111/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/regions/SG.js1779861332420719704 0
+167/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+tsconfig-utils@8.60.0_typescript@6.0.3/node_modules/@typescript-eslint/tsconfig-utils/node_modules/.bin/tsc1779861333233943054 0
+182/home/claude/propdeck/node_modules/.pnpm/@hookform+resolvers@5.4.0_react-hook-form@7.76.1_react@19.2.6_/node_modules/@hookform/resolvers/computed-types/dist/computed-types.modern.mjs1779861353548719906 0
+98/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/minWithOptions.js1779861354520719915 0
+84/home/claude/propdeck/node_modules/.pnpm/thenify@3.3.1/node_modules/thenify/index.js1779861338524719762 0
+119/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb-data-v1/libraries/liblmdb/mdb.c1779861734001586984 0
+127/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/currency.mjs1779861342384719799 0
 84/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/jiti1779861339004719767 0
 88/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/getDate.js1779861354476719915 0
 121/home/claude/propdeck/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/config/helpers/deep-array.js.map1779861326004719642 0
@@ -13815,7 +13803,7 @@
 133/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/arrow-down-a-z.mjs1779861342328719798 0
 132/home/claude/propdeck/node_modules/.pnpm/@floating-ui+utils@0.2.11/node_modules/@floating-ui/utils/dist/floating-ui.utils.umd.min.js1779861350256719874 0
 67/home/claude/propdeck/node_modules/.pnpm/node_modules/@humanfs/node1779861333140719710 0
-64/home/claude/propdeck/node_modules/.pnpm-workspace-state-v1.json1779945409849101346 0
+64/home/claude/propdeck/node_modules/.pnpm-workspace-state-v1.json1779945587061111880 0
 111/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/regions/KE.js1779861332404719703 0
 99/home/claude/propdeck/node_modules/.pnpm/resolve@1.22.12/node_modules/resolve/test/resolver_sync.js1779861336536719743 0
 130/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/saudi-riyal.mjs1779861342520719800 0
@@ -13888,6 +13876,18 @@
 105/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/isMatchWithOptions.d.cts1779861354336719913 0
 94/home/claude/propdeck/node_modules/.pnpm/any-promise@1.3.0/node_modules/any-promise/.npmignore1779861337944719756 0
 145/home/claude/propdeck/node_modules/.pnpm/@babel+core@7.29.7/node_modules/@babel/core/lib/transformation/read-input-source-map-file-browser.js.map1779861326016719642 0
+91/home/claude/propdeck/node_modules/.pnpm/fraction.js@5.3.4/node_modules/fraction.js/LICENSE1779861336744719745 0
+129/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/house-plug.mjs1779861342432719799 0
+111/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/regions/AU.js1779861332380719703 0
+151/home/claude/propdeck/node_modules/.pnpm/@parcel+workers@2.16.4_@parcel+core@2.16.4_@swc+helpers@0.5.21_/node_modules/@parcel/workers/src/childState.js1779861727496723487 0
+99/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/be-tarask/_lib1779861357900719948 1
+67/home/claude/propdeck/node_modules/.pnpm/@lmdb+lmdb-linux-x64@2.8.51779861733704723546 1
+124/home/claude/propdeck/node_modules/.pnpm/@radix-ui+react-context@1.1.3_@types+react@19.2.15_react@19.2.6/node_modules/@types1779861350792719879 1
+94/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/yearsToMonths.js1779861354556719916 0
+102/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lz4/lib/dll/example1779861734021234852 1
+127/home/claude/propdeck/node_modules/.pnpm/@babel+generator@7.29.7/node_modules/@babel/generator/lib/generators/deprecated.js.map1779861326884719651 0
+138/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/message-square-plus.mjs1779861342484719800 0
+135/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/document-scrollingelement.js1779861332396719703 0
 107/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/nextMondayWithOptions.d.ts1779861354356719914 0
 90/home/claude/propdeck/node_modules/.pnpm/postcss-selector-parser@6.1.2/node_modules/cssesc1779861339024719767 0
 98/home/claude/propdeck/node_modules/.pnpm/@babel+helpers@7.29.7/node_modules/@babel/helpers/LICENSE1779861326732719649 0
@@ -14243,7 +14243,7 @@
 118/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/download.js1779861332396719703 0
 124/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/angry.mjs1779861342328719798 0
 78/home/claude/propdeck/node_modules/.pnpm/node_modules/@parcel/transformer-html1779861734144723551 0
-48/home/claude/propdeck/node_modules/.modules.yaml1779945409789101342 0
+48/home/claude/propdeck/node_modules/.modules.yaml1779945587005111877 0
 252/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.60.0_@typescript-eslint+parser@8.60.0_eslint@10.4.0__584cde656b3f67c268d4fb64ded8076d/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-constraint.js1779861330132719682 0
 112/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/lmdb/dependencies/lmdb/libraries/liblmdb/midl.h1779861734013492980 0
 156/home/claude/propdeck/node_modules/.pnpm/@parcel+reporter-cli@2.16.4_@parcel+core@2.16.4_@swc+helpers@0.5.21_/node_modules/@parcel/reporter-cli/src/utils.js1779861724816723461 0
@@ -16595,7 +16595,7 @@
 114/home/claude/propdeck/node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js1779861336736719745 0
 248/home/claude/propdeck/node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.60.0_@typescript-eslint+parser@8.60.0_eslint@10.4.0__7527672befd0b8c69a72f17f1d208ee2/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-qualifier.d.ts1779861330156719682 0
 111/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/isWithinIntervalWithOptions.js1779861354488719915 0
-21/home/claude/propdeck1779945418045101833 1
+21/home/claude/propdeck1779945589929112051 1
 133/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/volleyball.mjs.map1779861342312719798 0
 85/home/claude/propdeck/node_modules/.pnpm/lmdb@2.8.5/node_modules/@lmdb/lmdb-linux-x641779861733904723548 0
 99/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/fp/setWithOptions.cjs1779861354268719913 0
@@ -17587,7 +17587,7 @@
 96/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0/node_modules/eslint/lib/linter/esquery.js1779861321540719599 0
 95/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/locale/uz-Cyrl.js1779861354556719916 0
 120/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0/node_modules/eslint/lib/linter/code-path-analysis/id-generator.js1779861321564719600 0
-47/home/claude/propdeck/dist/propdeck.4daa640f.js1779945418333101850 0
+47/home/claude/propdeck/dist/propdeck.4daa640f.js1779945589953112052 0
 205/home/claude/propdeck/node_modules/.pnpm/@radix-ui+react-portal@1.1.9_@types+react-dom@19.2.3_@types+react@19.2.15__@types+react_2058f8797ee4f20a020cf8a07e5c7824/node_modules/@radix-ui/react-portal/LICENSE1779861346032719834 0
 109/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0/node_modules/eslint/lib/rules/no-useless-assignment.js1779861321644719600 0
 115/home/claude/propdeck/node_modules/.pnpm/caniuse-lite@1.0.30001793/node_modules/caniuse-lite/data/features/audio.js1779861332380719703 0
@@ -19421,7 +19421,6 @@
 116/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/parse/_lib/parsers/DayPeriodParser.cjs1779861354100719911 0
 108/home/claude/propdeck/node_modules/.pnpm/tailwindcss@3.4.1/node_modules/tailwindcss/src/value-parser/walk.js1779861336028719738 0
 113/home/claude/propdeck/node_modules/.pnpm/type-fest@0.20.2/node_modules/type-fest/source/require-at-least-one.d.ts1779861732196723532 0
-48/home/claude/propdeck/dist/propdeck.7972a80d.css1779945418065101834 0
 106/home/claude/propdeck/node_modules/.pnpm/type-fest@0.20.2/node_modules/type-fest/source/tsconfig-json.d.ts1779861732196723532 0
 105/home/claude/propdeck/node_modules/.pnpm/type-fest@0.20.2/node_modules/type-fest/source/partial-deep.d.ts1779861732196723532 0
 84/home/claude/propdeck/node_modules/.pnpm/@radix-ui+rect@1.1.1/node_modules/@radix-ui1779861350864719880 1
@@ -20185,7 +20184,7 @@
 121/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/eslint/lib/rules/array-bracket-spacing.js1779861321496719599 0
 109/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/eslint/lib/rules/wrap-iife.js1779861321676719601 0
 102/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/eslint/lib/rules/utils1779861339040719767 1
-26/home/claude/propdeck/dist1779945418337101851 1
+26/home/claude/propdeck/dist1779945589993112054 1
 223/home/claude/propdeck/node_modules/.pnpm/@radix-ui+react-visually-hidden@1.2.3_@types+react-dom@19.2.3_@types+react@19.2.15__@ty_df31f7659159064425103695f04b2f6c/node_modules/@radix-ui/react-visually-hidden/dist/index.d.mts1779861347672719850 0
 110/home/claude/propdeck/node_modules/.pnpm/eslint@10.4.0_jiti@1.21.7/node_modules/eslint/lib/rules/utils/unicode1779861339036719767 1
 84/home/claude/propdeck/node_modules/.pnpm/zod@4.4.3/node_modules/zod/v4/locales/bg.js1779861326144719643 0
@@ -22061,6 +22060,7 @@
 129/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/ampersands.mjs1779861342328719798 0
 132/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/book-up-2.mjs.map1779861342012719795 0
 89/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/SECURITY.md1779861354620719916 0
+48/home/claude/propdeck/dist/propdeck.60233349.css1779945589993112054 0
 129/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/x-line-top.mjs1779861342576719801 0
 96/home/claude/propdeck/node_modules/.pnpm/date-fns@4.3.0/node_modules/date-fns/lastDayOfWeek.d.ts1779861354348719914 0
 134/home/claude/propdeck/node_modules/.pnpm/lucide-react@1.16.0_react@19.2.6/node_modules/lucide-react/dist/esm/icons/refresh-ccw-dot.mjs1779861342516719800 0
