@@ -49,7 +49,7 @@ src/
 
 ---
 
-## Phase 1 — 데이터 영속성 + 인증 + 충돌 감지 (~3주)
+## Phase 1 — 데이터 영속성 + 인증 (~3주)
 
 ### Firebase 설정
 
@@ -69,13 +69,19 @@ import { getFirestore } from 'firebase/firestore';
 
 ```
 /projects/{projectId}
-  name, client, emoji, ownerId, members[], createdAt
+  name, client, emoji, ownerId, memberIds[], createdAt
 
 /projects/{projectId}/chapters/{chapterId}
   name, parentId, order, status, assigneeId, intent, rfp[], text, version
 
 /projects/{projectId}/chapters/{chapterId}/comments/{commentId}
   userId, text, resolved, replies[], createdAt
+
+/projects/{projectId}/chapters/{chapterId}/history/{historyId}
+  userId, text, savedAt
+
+/users/{uid}/notifications/{notifId}
+  type, projectId, chapterId, fromUserId, read, createdAt
 ```
 
 현재 `types.ts`의 타입 구조와 대응됨. `version: number` 필드가 충돌 감지에 사용됨.
@@ -123,6 +129,17 @@ match /projects/{projectId} {
 }
 ```
 
+### Phase 1에서 함께 완성할 목업 기능
+
+| 항목 | 현재 상태 | 작업 |
+|------|----------|------|
+| 멤버 초대 | 입력창 UI만 | Firebase Auth 이메일 초대 연동 |
+| 역할 기반 권한 | 목업 동작 | Security Rules 적용 |
+| 챕터 담당자 | 목업 동작 | Firestore 업데이트 연결 |
+| 챕터 순서 DnD | 목업 동작 | Firestore `order` 필드 반영 |
+| 텍스트 버전 히스토리 | 없음 | `/history` 서브컬렉션 저장 |
+| 알림 (코멘트·상태변경·담당자 지정) | 하드코딩 3개 | `/users/{uid}/notifications/` 구독 |
+
 ---
 
 ## Phase 2 — 파일 처리 (~2주)
@@ -133,6 +150,7 @@ match /projects/{projectId} {
 
 ```
 gs://bucket/projects/{id}/chapters/{id}/ppt/{version}/{filename}
+gs://bucket/projects/{id}/refs/{filename}
 ```
 
 현재 `PptCard.tsx`가 목업으로 파일 선택 이벤트만 처리. Storage 연동 시 실제 업로드 + URL 저장으로 교체.
@@ -144,38 +162,13 @@ Phase 2: `PPTXjs` 클라이언트 파싱 (무료, Spark 플랜).
 
 `SlideInfo` 타입에 `thumbnailUrl?: string` 추가. 없으면 현재 CSS mock fallback.
 
----
+### Phase 2에서 함께 완성할 목업 기능
 
-## Phase 3 — 실시간 협업 (~2주)
-
-Phase 1 충돌 감지 위에 presence/잠금 레이어 추가.
-
-- Firebase Realtime Database presence로 온라인 사용자 표시
-- 에디터 진입 시 `editingBy: userId` 기록, 다른 사용자 진입 차단
-- 5분 비활동 시 자동 잠금 해제
-
----
-
-## Phase 4 — 알림 (~1주)
-
-- Firestore `/users/{uid}/notifications/` 실시간 구독
-- 현재 `NotifDropdown.tsx`는 하드코딩된 3개 항목. DB 연동으로 교체
-- 알림 클릭 → 챕터 이동은 이미 구현됨 (`onGoToChapter` 콜백)
-- 이메일/Slack은 Cloud Functions 필요 (Blaze 플랜)
-
----
-
-## Phase 5 — 미완성 기능 (~2주)
-
-| 기능 | 현재 상태 | 작업 |
+| 항목 | 현재 상태 | 작업 |
 |------|----------|------|
-| 멤버 초대 | 입력창 UI만 | Firebase Auth 이메일 초대 |
-| 역할 기반 권한 | 목업 동작 | Security Rules 적용 |
-| 챕터 담당자 | 목업 동작 | Firestore 업데이트 연결 |
-| 텍스트 버전 히스토리 | 없음 | `/history` 서브컬렉션 |
-| PPT 전체 머지 내보내기 | 버튼만 있음 (alert 처리) | Storage 파일 머지 |
-| 챕터 순서 | 목업 DnD 동작 | Firestore `order` 반영 |
-| RefView | 하드코딩 | 실제 파일 목록 연동 |
+| PPT 전체 머지 내보내기 | 버튼만 있음 (alert) | Storage 파일 머지 |
+| RefView 파일 목록 | 하드코딩 | 실제 Storage 파일 목록 연동 |
+| 알림 (파일 업로드) | 미구현 | Storage 업로드 완료 시 알림 이벤트 |
 
 ---
 
@@ -187,7 +180,6 @@ Blaze로 직접 업그레이드해야만 과금 시작.
 | 단계 | 예상 비용 |
 |------|---------|
 | 데모 ~ Phase 2 | $0 (Spark 무료) |
-| Phase 3~4 | $0 ~ 월 $20 (소규모 팀) |
 | PPT 고품질 썸네일 (선택) | Blaze 필요, 변환당 $0.0004 수준 |
 
 ---
